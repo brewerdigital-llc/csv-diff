@@ -51,7 +51,19 @@ from . import load_csv, load_json, compare, human_text
     is_flag=True,
     help="Show unchanged fields for rows with at least one change",
 )
-def cli(previous, current, key, ignore, format, json, singular, plural, show_unchanged):
+@click.option(
+    "--tolerance",
+    type=float,
+    default=None,
+    help="Threshold to consider when comparing two float numbers.",
+)
+@click.option(
+    "--absolute-tolerance",
+    type=float,
+    default=None,
+    help="Absolute threshold to consider when comparing two float numbers.",
+)
+def cli(previous, current, key, ignore, format, json, singular, plural, show_unchanged, tolerance, absolute_tolerance):
     "Diff two CSV or JSON files"
     dialect = {
         "csv": "excel",
@@ -66,7 +78,7 @@ def cli(previous, current, key, ignore, format, json, singular, plural, show_unc
                 open(filename, newline=""), key=key, dialect=dialect.get(format), ignore=ignore
             )
 
-    diff = compare(load(previous), load(current), show_unchanged)
+    diff = compare(load(previous), load(current), show_unchanged, tolerance, absolute_tolerance)
     if json:
         print(std_json.dumps(diff, indent=4))
     else:
