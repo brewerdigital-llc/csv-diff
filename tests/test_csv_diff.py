@@ -75,6 +75,16 @@ FOURTEEN = """id,name,age,sex
 2,Pancakes,3,female
 """
 
+FIFTEEN = """Record Count:2; File Name:FIFTEEN.csv; Date Created:2023-01-01 00:00:00.000000
+id,name,age
+1,Cleo,4
+2,Pancakes,2"""
+
+SIXTEEN = """Record Count:2; File Name:SIXTEEN.csv; Date Created:2023-01-01 00:00:00.000000
+id,name,age
+1,Cleo,5
+2,Pancakes,2"""
+
 def test_row_changed():
     diff = compare(
         load_csv(io.StringIO(ONE), key="id"), load_csv(io.StringIO(TWO), key="id")
@@ -162,6 +172,20 @@ def test_ignore_columns():
         "added": [],
         "removed": [],
         "changed": [{"key": "2", "changes": {"age": ["4", "3"]}}],
+        "columns_added": [],
+        "columns_removed": [],
+    } == diff
+
+
+def test_skip_metadata_row():
+    diff = compare(
+        load_csv(io.StringIO(FIFTEEN), key="id", skip_metadata_row=True),
+        load_csv(io.StringIO(SIXTEEN), key="id", skip_metadata_row=True),
+    )
+    assert {
+        "added": [],
+        "removed": [],
+        "changed": [{"key": "1", "changes": {"age": ["4", "5"]}}],
         "columns_added": [],
         "columns_removed": [],
     } == diff

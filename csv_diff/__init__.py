@@ -5,11 +5,16 @@ import hashlib
 from operator import itemgetter
 
 
-def load_csv(fp, key=None, dialect=None, ignore=None):
+def load_csv(fp, key=None, dialect=None, ignore=None, skip_metadata_row=False):
+    # If skip_metadata_row is True, we'll skip the first line of the CSV.
+    start_of_data = 0
+    if skip_metadata_row:
+        start_of_data = start_of_second_line(fp)
+        fp.seek(start_of_data)
     if dialect is None and fp.seekable():
         # Peek at first 1MB to sniff the delimiter and other dialect details
         peek = fp.read(1024 ** 2)
-        fp.seek(0)
+        fp.seek(start_of_data)
         try:
             dialect = csv.Sniffer().sniff(peek, delimiters=",\t;")
         except csv.Error:
@@ -26,6 +31,13 @@ def load_csv(fp, key=None, dialect=None, ignore=None):
             json.dumps(r, sort_keys=True).encode("utf8")
         ).hexdigest()
     return {keyfn(r): r for r in rows}
+
+
+def start_of_second_line(fp):
+    """Return the start of the second line of a file"""
+    fp.seek(0)
+    fp.readline()
+    return fp.tell()
 
 
 def load_json(fp, key=None, ignore=None):
