@@ -76,14 +76,14 @@ FOURTEEN = """id,name,age,sex
 """
 
 FIFTEEN = """Record Count:2; File Name:FIFTEEN.csv; Date Created:2023-01-01 00:00:00.000000
-id,name,age
-1,Cleo,4
-2,Pancakes,2"""
+id|name|age
+1|Cleo|4
+2|Pancakes|2"""
 
 SIXTEEN = """Record Count:2; File Name:SIXTEEN.csv; Date Created:2023-01-01 00:00:00.000000
-id,name,age
-1,Cleo,5
-2,Pancakes,2"""
+id|name|age
+1|Cleo|5
+2|Pancakes|2"""
 
 def test_row_changed():
     diff = compare(
