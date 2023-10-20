@@ -4,13 +4,6 @@ import json
 import hashlib
 from operator import itemgetter
 
-def floatifnum(s):
-    try:
-        s = float(s)
-    except ValueError:
-        pass
-    return s
-
 
 def load_csv(fp, key=None, dialect=None, ignore=None):
     if dialect is None and fp.seekable():
@@ -25,7 +18,7 @@ def load_csv(fp, key=None, dialect=None, ignore=None):
     fp = csv.reader(fp, dialect=(dialect or "excel"))
     headings = next(fp)
     ignore = set(ignore.split(',')) if ignore else set()
-    rows = [dict( (k, floatifnum(v)) for k,v in zip(headings, line) if k not in ignore) for line in fp]
+    rows = [dict( (k, v) for k,v in zip(headings, line) if k not in ignore) for line in fp]
     if key:
         keyfn = itemgetter(*key.split(','))
     else:
@@ -65,7 +58,7 @@ def _simplify_json_row(r, common_keys):
     return r
 
 
-def compare(previous, current, show_unchanged=False, tolerance=None, absolute_tolerance=None):
+def compare(previous, current, show_unchanged=False):
     result = {
         "added": [],
         "removed": [],
@@ -98,7 +91,7 @@ def compare(previous, current, show_unchanged=False, tolerance=None, absolute_to
         result["removed"] = [previous[id] for id in removed]
     if changed:
         for id in changed:
-            diffs = list(diff(previous[id], current[id], ignore=ignore_columns, tolerance=tolerance, absolute_tolerance=absolute_tolerance))
+            diffs = list(diff(previous[id], current[id], ignore=ignore_columns))
             if diffs:
                 changes = {
                     "key": id,
