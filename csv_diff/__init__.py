@@ -9,7 +9,7 @@ def load_csv(fp, key=None, dialect=None, ignore=None, skip_metadata_row=False):
     # If skip_metadata_row is True, we'll skip the first line of the CSV.
     start_of_data = 0
     if skip_metadata_row:
-        start_of_data = start_of_second_line(fp)
+        start_of_data = _start_of_second_line(fp)
         fp.seek(start_of_data)
     if dialect is None and fp.seekable():
         # Peek at first 1MB to sniff the delimiter and other dialect details
@@ -33,7 +33,7 @@ def load_csv(fp, key=None, dialect=None, ignore=None, skip_metadata_row=False):
     return {keyfn(r): r for r in rows}
 
 
-def start_of_second_line(fp):
+def _start_of_second_line(fp):
     """Return the start of the second line of a file"""
     fp.seek(0)
     fp.readline()
