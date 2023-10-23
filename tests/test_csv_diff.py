@@ -85,6 +85,12 @@ id|name|age
 1|Cleo|5
 2|Pancakes|2"""
 
+SEVENTEEN = """id,name,age
+"""
+
+EIGHTEEN = """id,name,age
+"""
+
 def test_row_changed():
     diff = compare(
         load_csv(io.StringIO(ONE), key="id"), load_csv(io.StringIO(TWO), key="id")
@@ -186,6 +192,19 @@ def test_skip_metadata_row():
         "added": [],
         "removed": [],
         "changed": [{"key": "1", "changes": {"age": ["4", "5"]}}],
+        "columns_added": [],
+        "columns_removed": [],
+    } == diff
+
+
+def test_empty():
+    diff = compare(
+        load_csv(io.StringIO(SEVENTEEN), key="id"), load_csv(io.StringIO(EIGHTEEN), key="id")
+    )
+    assert {
+        "added": [],
+        "removed": [],
+        "changed": [],
         "columns_added": [],
         "columns_removed": [],
     } == diff
