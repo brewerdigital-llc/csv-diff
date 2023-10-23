@@ -6,21 +6,22 @@ from operator import itemgetter
 
 
 def load_csv(fp, key=None, dialect=None, ignore=None, skip_metadata_row=False):
-    if dialect is None and fp.seekable():
-        # If skip_metadata_row is True, we'll skip the first line of the CSV.
-        start_of_data = 0
-        if skip_metadata_row:
-            start_of_data = _start_of_second_line(fp)
+    if fp.seekable():
+        if dialect is None:
+            # If skip_metadata_row is True, we'll skip the first line of the CSV.
+            start_of_data = 0
+            if skip_metadata_row:
+                start_of_data = _start_of_second_line(fp)
+                fp.seek(start_of_data)
+            # Peek at first 1MB to sniff the delimiter and other dialect details
+            peek = fp.read(1024 ** 2)
             fp.seek(start_of_data)
-        # Peek at first 1MB to sniff the delimiter and other dialect details
-        peek = fp.read(1024 ** 2)
-        fp.seek(start_of_data)
-        try:
-            dialect = csv.Sniffer().sniff(peek, delimiters=[',', '\t', ';', '|'])
-        except csv.Error:
-            # Oh well, we tried. Fallback to the default.
-            pass
-    if skip_metadata_row and not fp.seekable():
+            try:
+                dialect = csv.Sniffer().sniff(peek, delimiters=[',', '\t', ';', '|'])
+            except csv.Error:
+                # Oh well, we tried. Fallback to the default.
+                pass
+    elif skip_metadata_row:
         next(fp)
     fp = csv.reader(fp, dialect=(dialect or "excel"))
     headings = next(fp)
