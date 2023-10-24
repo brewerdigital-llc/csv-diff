@@ -84,7 +84,7 @@ def compare(previous, current, show_unchanged=False):
     # Have the columns changed?
     previous_columns = set()
     current_columns = set()
-    if type(previous) == dict:
+    if isinstance(previous, dict):
         previous_columns = set(next(iter(previous.values())).keys())
         current_columns = set(next(iter(current.values())).keys())
     else:
