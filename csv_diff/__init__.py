@@ -26,7 +26,7 @@ def load_csv(fp, key=None, dialect=None, ignore=None, skip_metadata_row=False):
     fp = csv.reader(fp, dialect=(dialect or "excel"))
     headings = next(fp)
     ignore = set(ignore.split(',')) if ignore else set()
-    rows = [dict( (k, v) for k,v in zip(headings, line) if k not in ignore) for line in fp]
+    rows = [dict((k, v) for k,v in zip(headings, line) if k not in ignore) for line in fp]
     if key:
         keyfn = itemgetter(*key.split(','))
     else:
